@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Magento Module Creator
-# Copyright (c) 2010 Erik Mitchell and The Dolan Company
+# Copyright (c) 2010 Erik Mitchell
 # Creates Magento module based on simple user input provided at runtime
 # Based on the Module Creator plugin by Netz98
 # 	Daniel Nitz <d.nitz@netz98.de>
@@ -10,12 +10,56 @@
 #	http://www.magentocommerce.com/wiki/custom_module_with_custom_database_table
 # License: http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 
-read -p "What is the Namespace you'd like to use? " NAMESPACE
-
-read -p "What is the name of your module? " MODULE
+#NAMESPACE=""
+#MODULE=""
+#
+#while [[ "$NAMESPACE" == "" ]]; do
+#	read -p "What is the Namespace you'd like to use? " NAMESPACE
+#done
+#
+#while [[ "$MODULE" == "" ]]; do
+#	read -p "What is the name of your module? " MODULE
+#done
+NAMESPACE="Dolan"
+MODULE="WPBuddy"
+AUTHOR="Erik Mitchell"
+PROJECT_NAME="$NAMESPACE"_"$MODULE"
 
 MODULE_LOWER=`echo $MODULE | awk '{print tolower($0)}'`
 
-echo "Namespace is $NAMESPACE"
-echo "Module is $MODULE"
-echo "Lowercase is $MODULE_LOWER"
+echo "Creating module $PROJECT_NAME"
+echo ""
+
+if [[ -d 'skel' ]]; then
+	if [[ -d "builds/$PROJECT_NAME" ]]; then
+		echo "Deleting previous build"
+		rm -fr "builds/$PROJECT_NAME"
+	fi
+
+	for LINE in `find skel`; do
+		BUILD=`echo $LINE | 	sed "s/skel/builds\/$PROJECT_NAME/" | \
+								sed "s/modules/foobar/g" | \
+								sed "s/Namespace/$NAMESPACE/g" | \
+								sed "s/Module/$MODULE/g" | \
+								sed "s/module/$MODULE_LOWER/g" | \
+								sed "s/foobar/modules/g"`
+		# Test if $LINE is a directory
+		if [[ -d $LINE ]]; then
+			#echo "Creating directory $BUILD"
+			mkdir -p $BUILD
+		else
+			#echo "Creating file $BUILD"
+			cat $LINE | sed "s/ModuleCreator/$AUTHOR/g" | \
+						sed "s/<Namespace>/$NAMESPACE/g" | \
+						sed "s/\[Namespace\]/$NAMESPACE/g" | \
+						sed "s/<Module>/$MODULE/g" | \
+						sed "s/\[Module\]/$MODULE/g" | \
+						sed "s/<module>/$MODULE_LOWER/g" | \
+						sed "s/\[module\]/$MODULE_LOWER/g" > $BUILD
+						
+		fi
+	done
+else
+	echo "Could not find the skel/ directory. Exiting..."
+	exit 1
+fi
