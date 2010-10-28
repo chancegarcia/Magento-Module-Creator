@@ -34,6 +34,10 @@ if [[ -f 'skel.tar' ]]; then
 	tar -xf skel.tar
 fi
 
+if [[ ! -d 'builds' ]]; then
+	mkdir builds
+fi
+
 if [[ -d 'skel' ]]; then
 	if [[ -d "builds/$PROJECT_NAME" ]]; then
 		echo "Deleting previous build"
