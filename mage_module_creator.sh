@@ -30,6 +30,10 @@ MODULE_LOWER=`echo $MODULE | awk '{print tolower($0)}'`
 echo "Creating module $PROJECT_NAME"
 echo ""
 
+if [[ -f 'skel.tar' ]]; then
+	tar -xf skel.tar
+fi
+
 if [[ -d 'skel' ]]; then
 	if [[ -d "builds/$PROJECT_NAME" ]]; then
 		echo "Deleting previous build"
@@ -63,3 +67,5 @@ else
 	echo "Could not find the skel/ directory. Exiting..."
 	exit 1
 fi
+
+rm -fr skel
