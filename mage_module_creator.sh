@@ -26,6 +26,7 @@ while [[ "$AUTHOR" == "" ]]; do
 done
 
 PROJECT_NAME="$NAMESPACE"_"$MODULE"
+NAMESPACE_LOWER=`echo $NAMESPACE | awk '{print tolower($0)}'`
 MODULE_LOWER=`echo $MODULE | awk '{print tolower($0)}'`
 
 echo "Creating module $PROJECT_NAME"
@@ -48,6 +49,7 @@ if [[ -d 'skel' ]]; then
 		BUILD=`echo $LINE | 	sed "s/skel/builds\/$PROJECT_NAME/" | \
 								sed "s/modules/foobar/g" | \
 								sed "s/Namespace/$NAMESPACE/g" | \
+								sed "s/namespace/$NAMESPACE_LOWER/g" | \
 								sed "s/Module/$MODULE/g" | \
 								sed "s/module/$MODULE_LOWER/g" | \
 								sed "s/foobar/modules/g"`
@@ -56,14 +58,24 @@ if [[ -d 'skel' ]]; then
 			#echo "Creating directory $BUILD"
 			mkdir -p $BUILD
 		else
-			#echo "Creating file $BUILD"
-			cat $LINE | sed "s/ModuleCreator/$AUTHOR/g" | \
-						sed "s/<Namespace>/$NAMESPACE/g" | \
-						sed "s/\[Namespace\]/$NAMESPACE/g" | \
-						sed "s/<Module>/$MODULE/g" | \
-						sed "s/\[Module\]/$MODULE/g" | \
-						sed "s/<module>/$MODULE_LOWER/g" | \
-						sed "s/\[module\]/$MODULE_LOWER/g" > $BUILD
+			# Test file type
+			echo $LINE | grep '\.xml$' > /dev/null 2>&1
+			if [[ $? -eq 0 ]]; then
+				# this is an XML file
+				cat $LINE | sed "s/ModuleCreator/$AUTHOR/g" | \
+							sed "s/\[Namespace\]/$NAMESPACE/g" | \
+							sed "s/\[namespace\]/$NAMESPACE_LOWER/g" | \
+							sed "s/\[Module\]/$MODULE/g" | \
+							sed "s/\[module\]/$MODULE_LOWER/g" | \
+							tr -d "\r" > $BUILD
+			else
+				cat $LINE | sed "s/ModuleCreator/$AUTHOR/g" | \
+							sed "s/<Namespace>/$NAMESPACE/g" | \
+							sed "s/<namespace>/$NAMESPACE_LOWER/g" | \
+							sed "s/<Module>/$MODULE/g" | \
+							sed "s/<module>/$MODULE_LOWER/g" | \
+							tr -d "\r" > $BUILD
+			fi
 						
 		fi
 	done
