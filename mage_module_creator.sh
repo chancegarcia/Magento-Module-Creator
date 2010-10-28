@@ -10,25 +10,25 @@
 #	http://www.magentocommerce.com/wiki/custom_module_with_custom_database_table
 # License: http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 
-#NAMESPACE=""
-#MODULE=""
-#
-#while [[ "$NAMESPACE" == "" ]]; do
-#	read -p "What is the Namespace you'd like to use? " NAMESPACE
-#done
-#
-#while [[ "$MODULE" == "" ]]; do
-#	read -p "What is the name of your module? " MODULE
-#done
-NAMESPACE="Dolan"
-MODULE="WPBuddy"
-AUTHOR="Erik Mitchell"
-PROJECT_NAME="$NAMESPACE"_"$MODULE"
+NAMESPACE=""
+MODULE=""
 
+while [[ "$NAMESPACE" == "" ]]; do
+	read -p "What is the Namespace you'd like to use? " NAMESPACE
+done
+
+while [[ "$MODULE" == "" ]]; do
+	read -p "What is the name of your module? " MODULE
+done
+
+while [[ "$AUTHOR" == "" ]]; do
+	read -p "What name should I use for author? " AUTHOR
+done
+
+PROJECT_NAME="$NAMESPACE"_"$MODULE"
 MODULE_LOWER=`echo $MODULE | awk '{print tolower($0)}'`
 
 echo "Creating module $PROJECT_NAME"
-echo ""
 
 if [[ -f 'skel.tar' ]]; then
 	tar -xf skel.tar
@@ -68,4 +68,15 @@ else
 	exit 1
 fi
 
+if [[ -f builds/"$PROJECT_NAME".tar.gz ]]; then
+	mv builds/"$PROJECT_NAME".tar.gz builds/"$PROJECT_NAME".tar.gz.old
+	echo "builds/$PROJECT_NAME.tar.gz moved to builds/$PROJECT_NAME.tar.gz.old"
+fi
+
+cd builds/"$PROJECT_NAME" && tar -zcf ../"$PROJECT_NAME".tar.gz *
+cd - > /dev/null 2>&1
+rm -fr builds/"$PROJECT_NAME"
 rm -fr skel
+
+echo "builds/$PROJECT_NAME.tar.gz created."
+echo "Finished."
