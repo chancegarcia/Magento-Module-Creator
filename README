@@ -1,0 +1,5 @@
+This is a shell script to create a Magento module based on a provided Namespace and Module name. It is based on the Module creation plugin found here: http://www.magentocommerce.com/magento-connect/Daniel+Nitz/extension/1108/modulecreator
+
+This script is still in development. It's hardly been tested at all!!! Use at your own risk. Any feedback or fixes are appreciated.
+
+I can be reached at erik dot mitchell at gmail dot com.
